@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: OAuth2  # give the designated name
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: { your-google-client-id-here}
+            client-secret: { add secret key}  # google secret key
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"  # give us the authorization code
+            scope:
+              - openid
+              - email
+              - profile
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+
+logging:
+  level:
+    '[org.springframework.security.oauth2]': DEBUG

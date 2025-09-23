@@ -1,0 +1,21 @@
+# ===== Backend (Spring Boot) =====
+OAuth2/target/
+OAuth2/.idea/
+OAuth2/.settings/
+OAuth2/.classpath
+OAuth2/.project
+*.log
+OAuth2/application.yml   # ignore real secrets
+OAuth2/src/main/resources/application.yml
+
+
+
+# ===== Frontend (React) =====
+oauth-ui-app-frontend/node_modules/
+oauth-ui-app-frontend/dist/
+oauth-ui-app-frontend/build/
+oauth-ui-app-frontend/.env
+
+# ===== OS / Editor =====
+.DS_Store
+*.iml
