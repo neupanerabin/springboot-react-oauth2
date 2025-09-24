@@ -12,7 +12,7 @@ createRoot(document.getElementById("root")!).render(
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/*  these 2 are path  */}
+          {/*  these 2 are path or routes   */}
           <Route path="/" element={<Home />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/info" element={<ShowInfo />}></Route>

@@ -8,15 +8,17 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // to get the valid path 
   const fromLocation = location.state?.from?.pathname || "/";
 
-  // check whether it is authenticated or not
+ // if already logged in, then redirect to home
   useEffect(() => {
     if (isAuthenticated) {
       navigate(fromLocation, { replace: true }); // then it goes to the authentication
     }
   }, [isAuthenticated, fromLocation, navigate]);
 
+  // handler to trigger OAuth2 login
   const handleLogin = (provider: string) => {
     if (provider === "google") {
       window.location.href = "http://localhost:8080/oauth2/authorization/google"; // url take to the google & do authentication and authorization
