@@ -5,6 +5,11 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: rabin
+      POSTGRES_DB: oAuth  # Add this to create the database automatically
       PGDATA: /var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
