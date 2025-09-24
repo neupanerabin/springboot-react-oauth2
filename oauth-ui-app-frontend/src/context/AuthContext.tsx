@@ -6,6 +6,13 @@ import {
   type ReactNode,
 } from "react";
 
+type User = {
+  name: string;
+  email: string;
+  picture: string;
+  role: "USER" | "ADMIN";
+};
+
 {
   /*these are 2 types
   1. for the authentication
@@ -15,11 +22,15 @@ import {
 type AuthContextType = {
   isAuthenticated: boolean;
   loading: boolean;
+  user: User | null;
+  setUser: (user: User | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   loading: false,
+  user: null,
+  setUser: () => {},
 });
 
 // create custom hook
@@ -31,9 +42,9 @@ type Props = {
 
 // export from here
 export const AuthProvider = ({ children }: Props) => {
+  const [user, setUser] = useState<User | null>(null);
   // 2 use state
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/user", {
@@ -42,19 +53,31 @@ export const AuthProvider = ({ children }: Props) => {
       .then((res) => {
         if (!res.ok) throw new Error("Not Authenticated");
         return res.json();
-      })
+      })  
       .then((data) => {
         console.log("data = ", data);
-        if (data !== null) {
-          setIsAuthenticated(true);
+        if (!data) {
+          setUser(null);
+        } else {
+          setUser({
+            name: data.name,
+            email: data.email,
+            picture: data.picture,
+            role: data.role,
+          });
         }
       })
-      .catch((e) => console.log("error = ", e))
+      .catch((e) => {
+        console.log("error = ", e);
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
+  const isAuthenticated = !!user;   // define authenticated state
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
