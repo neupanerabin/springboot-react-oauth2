@@ -1,4 +1,4 @@
-package org.auth2.oauth2learnapp.service;
+package org.auth2.oauth2learnapp.serviceImpl;
 
 
 /*
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-
 @Slf4j
 @Service
 public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest, OidcUser> {
@@ -30,24 +29,25 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
 
     public CustomOidcUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.oidcUserService = new OidcUserService();
+        this.oidcUserService = new OidcUserService();   // default OIDC service
     }
 
-    // this is used to return name and email from authentication
+    // This method is called after successful OAuth2 authentication to load user details
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         log.info("registration id: {}", registrationId);
 
+        // load user details fron google (or other OIDC provider).
+        // Delegate to the default OidcUserService to load user info from the OAuth2 provider
         OidcUser oidcUser = this.oidcUserService.loadUser(userRequest);
 
         final String name = oidcUser.getAttribute("name");
         final String email = oidcUser.getAttribute("email");
 
-        log.info("name = {}, email = {}", name, email);
+        log.info("name = {}, email = {}", name, email);  // Logs the user's name and email from the OAuth2 provider
 
-        // to find email from user  repository interface OR implements interface methods
-        // checks whether there is email or not
+        // // Check if the user exists in the database; if not, create a new user with default role USER
         User user = userRepository.findByEmail(email).orElseGet(() -> userRepository.save(User.builder()
                 .name(name)
                 .email(email)
@@ -56,8 +56,10 @@ public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest,
 
         log.info("user in DB: {}", user);   // display information in the terminal
 
+        // create authorities based on user role from DB
         var authorities = Set.of(new SimpleGrantedAuthority(user.getRole().name()));
 
+        // Return an OidcUser with the user's authorities, ID token, and user info
         return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
 
     }

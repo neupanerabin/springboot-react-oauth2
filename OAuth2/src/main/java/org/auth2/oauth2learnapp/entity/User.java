@@ -29,7 +29,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)    // store enum name, not ordinal
     private Role role;
 
     private String image;
